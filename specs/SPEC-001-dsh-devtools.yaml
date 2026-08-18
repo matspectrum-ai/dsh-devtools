@@ -1,0 +1,107 @@
+feature: dsh-devtools
+status: draft_after_m0
+baseline:
+  repository: deepseek-ai/deepseek-harness
+  commit: 99f6f02fecdb7dff40c3fbc9470f5907c29f74ca
+  release: 0.1.0-rc.7
+
+objectives:
+  - provide IDE-grade Git workflows inside DSH Web
+  - make Git worktrees first-class isolated agent execution targets
+  - provide interactive diff and review workflows
+  - provide GitHub pull request workflows
+  - provide a real interactive terminal
+  - keep DSH core unmodified for the MVP
+  - reuse audited community implementations when their contracts and compatibility are acceptable
+
+requirements:
+  architecture:
+    - external_plugin_bundle
+    - typed_host_client_contracts
+    - no_ui_direct_shell_execution
+    - no_duplicate_git_implementations
+    - explicit_workspace_and_worktree_identity
+  source_control:
+    - status
+    - diff
+    - stage
+    - unstage
+    - discard_with_confirmation
+    - commit
+    - branches
+    - fetch
+    - pull
+    - push
+    - log
+  worktrees:
+    - create_isolated_target
+    - list
+    - inspect
+    - review_ready_state
+    - preview_or_review
+    - finalize
+    - discard
+    - safe_cleanup
+    - recovery
+  pull_requests:
+    - authenticate_github
+    - list
+    - inspect
+    - create
+    - checkout
+    - checks
+    - reviews
+    - comments
+  diff_review:
+    - working_tree
+    - staged
+    - branch_or_commit
+    - binary_safe
+    - bounded_payloads
+    - structured_review_feedback
+  terminal:
+    - interactive_pty
+    - raw_input
+    - resize
+    - cwd_bound_to_workspace_or_worktree
+    - persistent_while_host_process_lives
+    - process_tree_cleanup
+  i18n:
+    - en
+    - pt_BR
+
+constraints:
+  - no_dsh_core_fork_for_mvp
+  - no_implicit_destructive_git_mutation
+  - no_browser_supplied_authority
+  - no_process_global_cwd_as_workspace_state
+  - no_unbounded_diff_or_terminal_payload
+  - no_implementation_before_compatibility_tests_and_contract_red_tests
+
+acceptance_criteria:
+  - selected community dependencies pass the rc7 compatibility matrix
+  - all host mutations are exposed through strict typed contracts
+  - source_control_and_agent_tools_observe_the_same_repository_state
+  - worktree_delivery_is_human_gated_and_fail_closed
+  - terminal_sessions_cannot_cross_workspace_or_worktree_boundaries
+  - github_unavailable_does_not_break_local_git
+  - plugin_uninstall_or_disable_leaves_no_stale_client_registration
+  - no_required_mvp_feature_needs_a_patch_to_deepseek_harness_core
+
+edge_cases:
+  - no_git_repository
+  - detached_head
+  - dirty_worktree
+  - merge_conflict
+  - rebase_in_progress
+  - missing_remote
+  - non_github_remote
+  - authentication_expired
+  - branch_checked_out_in_another_worktree
+  - stale_review_revision
+  - external_git_mutation
+  - binary_diff
+  - oversized_diff
+  - terminal_backend_unavailable
+  - terminal_process_exited
+  - plugin_version_incompatibility
